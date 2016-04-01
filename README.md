@@ -16,6 +16,10 @@ order processing system
 "orderpipeline" is a order processing server, it is a java application. 
 it contains a kafka consumer thread, it will poll the order message from kafka, 
 then put it to a ArrayBlockingQueue, then pipeline threads will poll the order message from this blocking queue,               and process the order. there are some steps in the pipeline. 
+Monitorservice can collect the status and statistic periodically, then send it to control center. And it can poll
+the configuration from control center (maybe zookeeper, we can use curator framework, it is opensource licnese),
+then according to the running mode and debug mode, we can make the app stop to process the order and switch the debug
+level dynamically.
                 
 ### There are two way which pipeline work.
              
@@ -28,5 +32,6 @@ One step has a runner service. all of the threads in one service will poll the o
 and handle them in the same time. Then processed order context will be delivered to the queue of the next
 runner service. it is really  muti threads pipeline. The order entity will be commit to database in each step.
 Then user can query the status of each step. 	
+
 
 
