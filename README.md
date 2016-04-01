@@ -34,7 +34,7 @@ runner service. it is really  muti threads pipeline. The order entity will be co
 Then user can query the status of each step. 
           
 There are two unit tests to test the two pipeline. 
-  1，PipelineSingleThreadExecutorTest
+  1，PipelineSingleThreadExecutorTest  
   2，PipelineMultiThreadsExecutorTest.
 
 
