@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="scheduler" class="com.yimuniao.scheduler.SchedulerService">
-		<property name="isFictitious" value="true" />
+		<property name="pipelineMultithreadsEnabled" value="true" />
 	</bean>
 
 </beans>

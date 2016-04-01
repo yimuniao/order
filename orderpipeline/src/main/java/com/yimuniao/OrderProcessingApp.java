@@ -10,6 +10,6 @@ public class OrderProcessingApp {
         System.out.println("Hello World!");
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
         SchedulerService schedulerService = (SchedulerService) context.getBean("scheduler");
-        schedulerService.startStaticPipeline();
+        schedulerService.start();
     }
 }

@@ -51,7 +51,7 @@ public abstract class AbstractRunnerService<T extends OrderContext> implements P
     }
 
     @Override
-    public boolean addFailRunnerService(PipelineRunnerService<T> failRunnerService) {
+    public boolean setFailRunnerService(PipelineRunnerService<T> failRunnerService) {
         this.failRunnerService = failRunnerService;
         return true;
     }
@@ -88,10 +88,6 @@ public abstract class AbstractRunnerService<T extends OrderContext> implements P
 
     public PipelineRunnerService<T> getFailRunnerService() {
         return failRunnerService;
-    }
-
-    public void setFailRunnerService(PipelineRunnerService<T> failRunnerService) {
-        this.failRunnerService = failRunnerService;
     }
 
     public ExecutorService getProcessorService() {

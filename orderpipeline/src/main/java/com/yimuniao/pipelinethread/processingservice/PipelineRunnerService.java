@@ -11,7 +11,7 @@ public interface PipelineRunnerService<T> {
 
     boolean sendToNextStep(T context);
 
-    boolean addFailRunnerService(PipelineRunnerService<T> failRunnerService);
+    boolean setFailRunnerService(PipelineRunnerService<T> failRunnerService);
 
     void setQueue(BlockingQueue<T> q);
 

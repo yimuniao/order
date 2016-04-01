@@ -54,11 +54,12 @@ public class PipelineMultiThreadsExecutor {
             PipelineRunnerService<OrderContext> pipelineRunnerServiceCurr = runnerServiceList.get(i);
             PipelineRunnerService<OrderContext> pipelineRunnerServiceNext = runnerServiceList.get(i + 1);
             pipelineRunnerServiceCurr.setNextPipelineRunnerService(pipelineRunnerServiceNext);
-            pipelineRunnerServiceCurr.addFailRunnerService(failRunnerService);
+            pipelineRunnerServiceCurr.setFailRunnerService(failRunnerService);
         }
         PipelineRunnerService<OrderContext> pipelineRunnerService = runnerServiceList.get(runnerServiceList.size()-1);
         pipelineRunnerService.setNextPipelineRunnerService(completeRunnerService);
         runnerServiceList.add(completeRunnerService);
+        completeRunnerService.setFailRunnerService(failRunnerService);
         runnerServiceList.add(failRunnerService);
     }
 
@@ -94,6 +95,10 @@ public class PipelineMultiThreadsExecutor {
     public PipelineMultiThreadsExecutor addFailRunnerService(PipelineRunnerService<OrderContext> failProcessingRunnerService) {
         this.failRunnerService = failProcessingRunnerService;
         return this;
+    }
+
+    public List<PipelineRunnerService<OrderContext>> getRunnerServiceList() {
+        return runnerServiceList;
     }
 
 }

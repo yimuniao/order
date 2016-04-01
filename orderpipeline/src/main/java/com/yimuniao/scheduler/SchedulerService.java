@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.yimuniao.KafkaProperties;
 import com.yimuniao.OrderContext;
 import com.yimuniao.entity.OrderEntity;
+import com.yimuniao.monitor.MonitorService;
 import com.yimuniao.pipeline.Pipeline;
 import com.yimuniao.pipeline.PipelineSingleThreadExecutor;
 import com.yimuniao.pipeline.impl.PipelineImpl;
@@ -49,6 +50,11 @@ public class SchedulerService {
      * steps, there are many threads to do such job.
      */
     private PipelineSingleThreadExecutor pipelineSingleThreadExecutor;
+    
+    /**
+     *  send status and count to control center, and polling the configuration from center.
+     */
+    private MonitorService monitorService;
 
     public void produceToScheduler(OrderEntity entity) throws InterruptedException {
         scheduler.put(new OrderContext(entity));
@@ -81,13 +87,27 @@ public class SchedulerService {
         public void run() {
             try {
                 consumerFromKafka.subscribe(Collections.singletonList(topic));
-                ConsumerRecords<Integer, OrderEntity> records = consumerFromKafka.poll(1000);
-                for (ConsumerRecord<Integer, OrderEntity> record : records) {
-                    logger.debug("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
-
-                    produceToScheduler(record.value());
-                    Thread.sleep(10);
+                while(true) {
+                    
+                    int runningMode = monitorService.getRunningMode();
+                    
+                    /*
+                     * if runningMode is 0, it means stop the app, then sleep 5 minutes, pipeline have enough time to process all of the order.
+                     */
+                    if (runningMode == 0){
+                        Thread.sleep(300);
+                        break;
+                    }
+                    
+                    ConsumerRecords<Integer, OrderEntity> records = consumerFromKafka.poll(1000);
+                    for (ConsumerRecord<Integer, OrderEntity> record : records) {
+                        logger.debug("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
+                        
+                        produceToScheduler(record.value());
+                        Thread.sleep(10);
+                    }
                 }
+                    
 
             } catch (InterruptedException ex) {
             }
@@ -113,7 +133,7 @@ public class SchedulerService {
         }
     }
 
-    public void startStaticPipeline() {
+    private void startStaticPipeline() {
         pipelineSingleThreadExecutor = new PipelineSingleThreadExecutor(new PipelineImpl());
         pipelineSingleThreadExecutor.init();
 
@@ -129,20 +149,26 @@ public class SchedulerService {
         logger.debug("===consumer thread size: " + consumerCount);
     }
 
-    public void startPipelineThreads() {
+    private void startPipelineThreads() {
         ProducerToPipeline producer = new ProducerToPipeline(KafkaProperties.topic);
         producerService.submit(producer);
 
-        PipelineMultiThreadsExecutor pipelineExecutor = new PipelineMultiThreadsExecutor(scheduler.getQueue());
+        pipelineMultiThreadsExecutor = new PipelineMultiThreadsExecutor(scheduler.getQueue());
 
-        pipelineExecutor.addRunnerService(new SchedulingRunnerService(11))
+        pipelineMultiThreadsExecutor.addRunnerService(new SchedulingRunnerService(11))
                         .addRunnerService(new PreProcessingRunnerService(10))
                         .addRunnerService(new ProcessingRunnerService(9))
                         .addRunnerService(new PostProcessingRunnerService(8))
                         .addCompleteRunnerService(new CompleteProcessingRunnerService(1))
                         .addFailRunnerService(new FailProssingRunnerService(1));
 
-        pipelineExecutor.start();
+        pipelineMultiThreadsExecutor.start();
+    }
+    
+    private void startMonitorService()
+    {
+        monitorService = new MonitorService(pipelineMultiThreadsExecutor);
+        monitorService.start();
     }
 
     public void start() {
@@ -151,6 +177,8 @@ public class SchedulerService {
         } else {
             startStaticPipeline();
         }
+        
+        startMonitorService();
     }
 
     public int getSize() {
