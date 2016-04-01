@@ -33,7 +33,9 @@ and handle them in the same time. Then processed order context will be delivered
 runner service. it is really  muti threads pipeline. The order entity will be commit to database in each step.
 Then user can query the status of each step. 
           
-There are two unit tests to test the two pipeline. one is PipelineSingleThreadExecutorTest, the other is PipelineMultiThreadsExecutorTest.
+There are two unit tests to test the two pipeline. 
+  1，PipelineSingleThreadExecutorTest
+  2，PipelineMultiThreadsExecutorTest.
 
 
 ## About the unique order id issue.
