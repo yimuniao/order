@@ -21,7 +21,7 @@ the configuration from control center (maybe zookeeper, we can use curator frame
 then according to the running mode and debug mode, we can make the app stop to process the order and switch the debug
 level dynamically.
                 
-### There are two way which pipeline work.
+### Two ways pipeline works.
              
 1, one pipeline have some processors, one order will go through the processors in sequence. 
 it means all of the processors work in one thread. Maybe you will say, 
