@@ -13,9 +13,9 @@ order processing system
              thread will poll from the blocking, and send the order to kafka server. 
              The webserver provide the query interface.
 ## orderpipeline             
-"orderpipeline" is a order processing server, it is a java application. 
+"orderpipeline" is an order processing server, it is a java application. 
 it contains a kafka consumer thread, it will poll the order message from kafka, 
-then put it to a ArrayBlockingQueue, then pipeline threads will poll the order message from this blocking queue,               and process the order. there are some steps in the pipeline. 
+then put it to an ArrayBlockingQueue, then pipeline threads will poll the order message from this blocking queue,               and process the order. there are some steps in the pipeline. 
 Monitorservice can collect the status and statistic periodically, then send it to control center. And it can poll
 the configuration from control center (maybe zookeeper, we can use curator framework, it is opensource licnese),
 then according to the running mode and debug mode, we can make the app stop to process the order and switch the debug
