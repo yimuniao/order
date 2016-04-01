@@ -31,7 +31,14 @@ it has a performance issue, but actually, you can start many threads in the same
 One step has a runner service. all of the threads in one service will poll the order context from queue, 
 and handle them in the same time. Then processed order context will be delivered to the queue of the next
 runner service. it is really  muti threads pipeline. The order entity will be commit to database in each step.
-Then user can query the status of each step. 	
+Then user can query the status of each step. 
+          
+There are two unit tests to test the two pipeline. one is PipelineSingleThreadExecutorTest, the other is PipelineMultiThreadsExecutorTest.
 
 
-
+## About the unique order id issue.
+  currently, it depends the database function, the value of id column is auto increased.
+  [@GeneratedValue(strategy = GenerationType.AUTO)]
+    
+  if this method is not ok, it is easy to generate an unique id by creating a new service in orderweb module. For example:
+  Assign one webservice a unique id, then appending a incremental value to the unique id. Then webservice unique id plus incremental value is a new global unique id.
