@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="/javascripts/extjs/resources/css/ext-all-neptune.css" />
+    <script type="text/javascript" src="/javascripts/extjs/ext-all.js"></script>
+    <script type="text/javascript" src="/javascripts/extjs/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"> </script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <% articles.forEach(function(article){ %>
+      <%= article.title %>
+    <% }) %>
+  </body>
+</html>

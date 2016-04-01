@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>Order System</title>
+        <link rel="stylesheet" type="text/css" href="$contextPath/javascripts/extjs/resources/css/ext-all-neptune.css" />
+        <!--
+        <script type="text/javascript" src="$contextPath/javascripts/extjs/ext-all.js"></script>
+        <script type="text/javascript" src="$contextPath/javascripts/extjs/ext-lang-zh_CN.js"></script>
+        <script type="text/javascript" src="$contextPath/javascripts/app.js"> </script>
+        -->
+        
+        <style type="text/css">
+            div#container{width:500px}
+            div#header {background-color:#99bbbb;}
+            div#menu {background-color:#ffff99;height:200px;width:150px;float:left;}
+            div#content {background-color:#EEEEEE;height:200px;width:350px;float:left;}
+            div#footer {background-color:#99bbbb;clear:both;text-align:center;}
+            h1 {margin-bottom:0;}
+            h2 {margin-bottom:0;font-size:18px;}
+            ul {margin:0;}
+            li {list-style:none;}
+        </style>
+    </head>
+    
+    
+<body>
+    <span>Time:</span>
+    <ul>
+        <li>From controller: $time</li>
+        <li>From velocity: $dateTool</li>
+    </ul>
+    <span>Message: $message</span>
+    
+    <div id="container">
+
+        <div id="header">
+            <h1>Order Web Page</h1>
+        </div>
+        
+        <div id="menu">
+            <h2>Menu</h2>
+            <ul>
+                <li>Submit order</li>
+                <li>Query order</li>
+            </ul>
+        </div>
+        
+        <div id="content">
+            <form action=""method="post">
+                <table border="1">
+                    <tr>
+                        <td>OrderDescription</td>
+                        <td><input type="text" id="description" value="a car......................." size="25" maxlength="2000"></td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+                <br>
+                        
+                <input type="submit" value="summit"><input type="reset" value="cancel">
+            </form>     
+        </div>
+        
+        <div id="footer">Copyright Liang.fan</div>
+    
+    </div>
+            
+</body>
+
+</html>

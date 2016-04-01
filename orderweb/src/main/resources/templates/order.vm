@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title><%= title %></title>
+        <link rel="stylesheet" type="text/css" href="$contextPath/javascripts/extjs/resources/css/ext-all-neptune.css" />
+        <!--
+        <script type="text/javascript" src="$contextPath/javascripts/extjs/ext-all.js"></script>
+        <script type="text/javascript" src="$contextPath/javascripts/extjs/ext-lang-zh_CN.js"></script>
+        <script type="text/javascript" src="$contextPath/javascripts/app.js"> </script>
+        -->
+    </head>
+<body>
+	<span>Time:</span>
+	<ul>
+		<li>From controller: $time</li>
+		<li>From velocity: $dateTool</li>
+	</ul>
+	<span>Message: $message</span>
+</body>
+
+</html>
