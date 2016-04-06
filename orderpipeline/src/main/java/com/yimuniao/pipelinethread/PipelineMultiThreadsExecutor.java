@@ -72,10 +72,6 @@ public class PipelineMultiThreadsExecutor {
         headRunnerService.addToUnHandledQueue(context);
     }
 
-    public PipelineRunnerService<OrderContext> getHeadRunnerService() {
-        return headRunnerService;
-    }
-
     private void setHeadRunnerService(PipelineRunnerService<OrderContext> headRunnerService) {
         this.headRunnerService = headRunnerService;
     }
