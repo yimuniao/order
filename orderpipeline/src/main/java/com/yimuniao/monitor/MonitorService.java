@@ -48,11 +48,7 @@ public class MonitorService {
                 while (true) {
                     
 
-                    List<PipelineRunnerService<OrderContext>> runnerServiceList = pipelineExecutor.getRunnerServiceList();
-                    List<Integer> valueList = new ArrayList<Integer>();
-                    for (PipelineRunnerService<OrderContext> service : runnerServiceList) {
-                        valueList.add(service.getProcessedOrderCount());
-                    }
+                    List<Integer> valueList = pipelineExecutor.getStatistic();
                     
                    /**
                     *  send the valueList to control center. and maybe it can write ahead to log first. it is the usually way to write some thing important.

@@ -2,6 +2,7 @@ package com.yimuniao.scheduler;
 
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -153,14 +154,14 @@ public class SchedulerService {
         ProducerToPipeline producer = new ProducerToPipeline(KafkaProperties.topic);
         producerService.submit(producer);
 
-        pipelineMultiThreadsExecutor = new PipelineMultiThreadsExecutor(scheduler.getQueue());
-
-        pipelineMultiThreadsExecutor.addRunnerService(new SchedulingRunnerService(11))
-                        .addRunnerService(new PreProcessingRunnerService(10))
-                        .addRunnerService(new ProcessingRunnerService(9))
-                        .addRunnerService(new PostProcessingRunnerService(8))
-                        .addCompleteRunnerService(new CompleteProcessingRunnerService(1))
-                        .addFailRunnerService(new FailProssingRunnerService(1));
+        pipelineMultiThreadsExecutor = new PipelineMultiThreadsExecutor.Builder().addRunnerService(new SchedulingRunnerService(11))
+                                                        .addRunnerService(new PreProcessingRunnerService(10))
+                                                        .addRunnerService(new ProcessingRunnerService(9))
+                                                        .addRunnerService(new PostProcessingRunnerService(8))
+                                                        .setCompleteRunnerService(new CompleteProcessingRunnerService(1))
+                                                        .setFailRunnerService(new FailProssingRunnerService(1))
+                                                        .setQueueForHeaderRunnerService(scheduler.getQueue())
+                                                        .build();
 
         pipelineMultiThreadsExecutor.start();
     }

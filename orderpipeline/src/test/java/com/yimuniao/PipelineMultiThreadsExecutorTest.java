@@ -39,7 +39,7 @@ public class PipelineMultiThreadsExecutorTest extends TestCase {
     protected void setUp() throws Exception {
         // TODO Auto-generated method stub
         super.setUp();
-        pipelineExecutor = new PipelineMultiThreadsExecutor(new ArrayBlockingQueue<OrderContext>(50));
+//        pipelineExecutor = new PipelineMultiThreadsExecutor(new ArrayBlockingQueue<OrderContext>(50));
         
         for(int i = 0; i<100; i++)
         {
@@ -72,19 +72,20 @@ public class PipelineMultiThreadsExecutorTest extends TestCase {
      */
     public void testApp() {
 
-        
         SchedulingRunnerService schedulingService = new SchedulingRunnerService(1);
         PreProcessingRunnerService preProcessingService = new PreProcessingRunnerService(1);
         ProcessingRunnerService processingService = new ProcessingRunnerService(1);
         PostProcessingRunnerService postProcessingService = new PostProcessingRunnerService(1);
         CompleteProcessingRunnerService completeProcessingRunnerService = new CompleteProcessingRunnerService(1);
         FailProssingRunnerService failProcessingRunnerService = new FailProssingRunnerService(1);
-        pipelineExecutor.addRunnerService(schedulingService)
-                        .addRunnerService(preProcessingService)
-                        .addRunnerService(processingService)
-                        .addRunnerService(postProcessingService)
-                        .addCompleteRunnerService(completeProcessingRunnerService)
-                        .addFailRunnerService(failProcessingRunnerService);
+        pipelineExecutor = new PipelineMultiThreadsExecutor.Builder().addRunnerService(schedulingService)
+                                                                     .addRunnerService(preProcessingService)
+                                                                     .addRunnerService(processingService)
+                                                                     .addRunnerService(postProcessingService)
+                                                                     .setCompleteRunnerService(completeProcessingRunnerService)
+                                                                     .setFailRunnerService(failProcessingRunnerService)
+                                                                     .setQueueForHeaderRunnerService(new ArrayBlockingQueue<OrderContext>(50))
+                                                                     .build();
 
         pipelineExecutor.start();
         int i = 0;

@@ -1,5 +1,6 @@
 package com.yimuniao.pipelinethread;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -20,24 +21,17 @@ public class PipelineMultiThreadsExecutor {
 
     private PipelineRunnerService<OrderContext> failRunnerService;
 
-    private List<PipelineRunnerService<OrderContext>> runnerServiceList = new LinkedList<PipelineRunnerService<OrderContext>>();
+    private List<PipelineRunnerService<OrderContext>> runnerServiceList = null;
 
-    private BlockingQueue<OrderContext> queueForHeaderRunnerService = null;
-
-    public PipelineMultiThreadsExecutor(BlockingQueue<OrderContext> queue) {
-        queueForHeaderRunnerService = queue;
-    }
-
-    public PipelineMultiThreadsExecutor addRunnerService(PipelineRunnerService<OrderContext> service) {
-        if (headRunnerService == null) {
-            headRunnerService = service;
-            headRunnerService.setQueue(queueForHeaderRunnerService);
-        }
-        runnerServiceList.add(service);
-        return this;
-    }
+    private PipelineMultiThreadsExecutor() { }
 
     private void reContructRunnerServiceList() {
+        
+        if (failRunnerService == null || completeRunnerService == null) {
+            logger.error("Fatal Error: There is no Fail processor service or complete processor service initialization.");
+            System.exit(1);
+        }
+        
         if (runnerServiceList.size() <= 1) {
             return;
         }
@@ -56,6 +50,7 @@ public class PipelineMultiThreadsExecutor {
             pipelineRunnerServiceCurr.setNextPipelineRunnerService(pipelineRunnerServiceNext);
             pipelineRunnerServiceCurr.setFailRunnerService(failRunnerService);
         }
+        
         PipelineRunnerService<OrderContext> pipelineRunnerService = runnerServiceList.get(runnerServiceList.size()-1);
         pipelineRunnerService.setNextPipelineRunnerService(completeRunnerService);
         runnerServiceList.add(completeRunnerService);
@@ -65,13 +60,6 @@ public class PipelineMultiThreadsExecutor {
 
     public void start() {
 
-        if (failRunnerService == null || completeRunnerService == null) {
-            logger.error("Fatal Error: There is no Fail processor service or complete processor service initialization.");
-            System.exit(1);
-        }
-
-        reContructRunnerServiceList();
-        
         for (PipelineRunnerService<OrderContext> service : runnerServiceList) {
             service.start();
         }
@@ -84,21 +72,85 @@ public class PipelineMultiThreadsExecutor {
         headRunnerService.addToUnHandledQueue(context);
     }
 
-    public PipelineMultiThreadsExecutor addCompleteRunnerService(PipelineRunnerService<OrderContext> completeProcessingRunnerService) {
-        this.completeRunnerService = completeProcessingRunnerService;
-        if (!runnerServiceList.contains(completeProcessingRunnerService)) {
-            runnerServiceList.add(completeProcessingRunnerService);
+    public PipelineRunnerService<OrderContext> getHeadRunnerService() {
+        return headRunnerService;
+    }
+
+    private void setHeadRunnerService(PipelineRunnerService<OrderContext> headRunnerService) {
+        this.headRunnerService = headRunnerService;
+    }
+
+    private void setCompleteRunnerService(PipelineRunnerService<OrderContext> completeRunnerService) {
+        this.completeRunnerService = completeRunnerService;
+    }
+
+    private void setFailRunnerService(PipelineRunnerService<OrderContext> failRunnerService) {
+        this.failRunnerService = failRunnerService;
+    }
+
+    private void setRunnerServiceList(List<PipelineRunnerService<OrderContext>> runnerServiceList) {
+        this.runnerServiceList = runnerServiceList;
+    }
+
+    public List<Integer> getStatistic() {
+        List<Integer> valueList = new ArrayList<Integer>();
+        for (PipelineRunnerService<OrderContext> service : runnerServiceList) {
+            valueList.add(service.getProcessedOrderCount());
         }
-        return this;
+        
+        return valueList;
     }
+    
+    public static class Builder{
+        private PipelineRunnerService<OrderContext> headRunnerService;
 
-    public PipelineMultiThreadsExecutor addFailRunnerService(PipelineRunnerService<OrderContext> failProcessingRunnerService) {
-        this.failRunnerService = failProcessingRunnerService;
-        return this;
-    }
+        private PipelineRunnerService<OrderContext> completeRunnerService;
 
-    public List<PipelineRunnerService<OrderContext>> getRunnerServiceList() {
-        return runnerServiceList;
+        private PipelineRunnerService<OrderContext> failRunnerService;
+
+        private List<PipelineRunnerService<OrderContext>> runnerServiceList = new LinkedList<PipelineRunnerService<OrderContext>>();
+
+        private BlockingQueue<OrderContext> queueForHeaderRunnerService = null;
+        
+        public Builder setQueueForHeaderRunnerService(BlockingQueue<OrderContext> queueForHeaderRunnerService) {
+            this.queueForHeaderRunnerService = queueForHeaderRunnerService;
+            return this;
+        }
+
+        public Builder setHeadRunnerService(PipelineRunnerService<OrderContext> headRunnerService) {
+            this.headRunnerService = headRunnerService;
+            return this;
+        }
+
+        public Builder setCompleteRunnerService(PipelineRunnerService<OrderContext> completeRunnerService) {
+            this.completeRunnerService = completeRunnerService;
+            return this;
+        }
+
+        public Builder setFailRunnerService(PipelineRunnerService<OrderContext> failRunnerService) {
+            this.failRunnerService = failRunnerService;
+            return this;
+        }
+        
+        public Builder addRunnerService(PipelineRunnerService<OrderContext> service) {
+            if (headRunnerService == null) {
+                headRunnerService = service;
+                headRunnerService.setQueue(queueForHeaderRunnerService);
+            }
+            runnerServiceList.add(service);
+            return this;
+        }
+        
+        public PipelineMultiThreadsExecutor build() {
+            PipelineMultiThreadsExecutor pipelineExecutor = new PipelineMultiThreadsExecutor(); 
+            pipelineExecutor.setHeadRunnerService(headRunnerService);
+            pipelineExecutor.setCompleteRunnerService(completeRunnerService);
+            pipelineExecutor.setFailRunnerService(failRunnerService);
+            pipelineExecutor.setRunnerServiceList(runnerServiceList);
+            pipelineExecutor.reContructRunnerServiceList();
+            return pipelineExecutor;
+        }  
+        
     }
 
 }
