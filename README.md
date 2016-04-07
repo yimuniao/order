@@ -42,3 +42,6 @@ There are two unit tests to test the two pipeline.  1，PipelineSingleThreadExec
     
   if this method is not ok, it is easy to generate an unique id by creating a new service in orderweb module. For example:
   Assign one webservice a unique id, then appending a incremental value to the unique id. Then webservice unique id plus incremental value is a new global unique id.
+## How to guarantee the safty of the order
+  There will be many scanner processes that register to Zookeeper, one of them is master, the others are slaves. when the master is down, one of the slaves will become master. it will garrantee the scanner's safty.
+  The main scanner's responsibility is to scan database to get the orders which are timeout. After got the timeout orders, then send them to kafka, then pipeline node will cosume these orders again.
