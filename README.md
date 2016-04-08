@@ -50,10 +50,11 @@ There are two unit tests to test the two pipeline.  1，PipelineSingleThreadExec
   The main responsibility of the scanner is to scan database to get the orders which are timeout. After got the timeout orders, then send them to kafka, then pipeline node will cosume these orders again.
  
 ## Some other issues 
-If the database is the bottlenetck, we can partition the table or use submeter. 
-If you worry about the kafka server crash, we can do write-ahead log before sending to kafka server,  after kafka server  recovery, replay the log.
+  If the database is the bottlenetck, we can partition the table or use submeter. 
+  
+  If you worry about the kafka server crash, we can do write-ahead log before sending to kafka server,  after kafka server  recovery, replay the log.
 
-If you do not worry about the little delay of order processing when enlarging the capacity, we can use kafka + storm to processing the order, this solution has  a disadvantage, when we join a new node we should enlarge the number of worker, executor and task. Looks like during the rebalance, there are will be about ten seconds dealy.
+  If you do not worry about the little delay of order processing when enlarging the capacity, we can use kafka + storm to processing the order, this solution has  a disadvantage, when we join a new node we should enlarge the number of worker, executor and task. Looks like during the rebalance, there are will be about ten seconds dealy.
 
 
   
