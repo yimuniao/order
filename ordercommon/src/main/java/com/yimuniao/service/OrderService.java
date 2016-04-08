@@ -1,5 +1,6 @@
 package com.yimuniao.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.yimuniao.entity.OrderEntity;
@@ -46,5 +47,19 @@ public interface OrderService {
      * @return
      */
     OrderEntity update(OrderEntity order);
+    
+    /**
+     * 
+     * @param before
+     * @return
+     */
+    List<OrderEntity> getTimeoutOrder(Date before);
+    
+    /**
+     * 
+     * @param before
+     * @return
+     */
+    List<OrderEntity> getTimeoutOrder();
 
 }

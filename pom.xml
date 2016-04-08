@@ -21,6 +21,7 @@
 		<module>ordercommon</module>
         <module>orderpipeline</module>       
         <module>orderweb</module>       
+        <module>orderscanner</module>       
     </modules>
 
   <build>

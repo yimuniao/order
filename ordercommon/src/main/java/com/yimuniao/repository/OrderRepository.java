@@ -1,6 +1,7 @@
 package com.yimuniao.repository;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -55,5 +56,13 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
      */
     @Query("select a from OrderEntity a where a.userId = ?1")
     OrderEntity findByUserId(String userId);
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    @Query("select a from OrderEntity a where completeTime == null and starttime <= ?1")
+    List<OrderEntity> find(Date before);
 
 }
