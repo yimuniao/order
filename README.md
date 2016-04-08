@@ -7,11 +7,11 @@ order processing system
 
 ## orderweb
 "orderweb" is a restful web service, it is based on spring boot. 
-             it accept the order information from user summbit, then first insert it into database, 
+             it accept the order information from user submition, then first insert it into database, 
              database will generate a unique orderid, then return the order newly generated to browser. 
              At the same time, service will put the order a blocking queue, then a kalka producer 
-             thread will poll from the blocking, and send the order to kafka server. 
-             The webserver provide the query interface.
+             thread will poll from the blocking queue, and send the order to kafka server. 
+             The webserver provide the query interface also.
 ## orderpipeline             
 "orderpipeline" is an order processing server, it is a java application. 
 it contains a kafka consumer thread, it will poll the order message from kafka, 
