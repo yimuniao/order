@@ -59,7 +59,8 @@ There are two unit tests to test the two pipeline.  1，PipelineSingleThreadExec
   
   To guarantee the safty of the service, there will no single node and no center node.
   
-  
+  If you do not worry about the output seriously, we can use  rabbitMQ cluster to replace kafka. rabbitMQ has Message acknowledgment, when consumer processed a message, it can send ack to rabbitMQ, then MQ will delete this message, if rabbitMQ does not receive such ack for long time, rabbitMQ will consider the consumer droped, and will send the message to other consumer. Then it guarantees the safty of order after the messagequeue part. but rabbitMQ does not guarantee the sequence of the messages. The output of rabbitMQ is about the 1/10 of kafka.
+   
 
 
   
