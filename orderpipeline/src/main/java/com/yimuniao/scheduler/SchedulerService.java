@@ -2,7 +2,6 @@ package com.yimuniao.scheduler;
 
 import java.util.Collections;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -86,31 +85,31 @@ public class SchedulerService {
         }
 
         public void run() {
-            try {
-                consumerFromKafka.subscribe(Collections.singletonList(topic));
-                while(true) {
-                    
-                    int runningMode = monitorService.getRunningMode();
-                    
-                    /*
-                     * if runningMode is 0, it means stop the app, then sleep 5 minutes, pipeline have enough time to process all of the order.
-                     */
-                    if (runningMode == 0){
-                        Thread.sleep(300);
-                        break;
-                    }
-                    
-                    ConsumerRecords<Integer, OrderEntity> records = consumerFromKafka.poll(1000);
-                    for (ConsumerRecord<Integer, OrderEntity> record : records) {
-                        logger.debug("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
+            while(true) {
+                try {
+                    consumerFromKafka.subscribe(Collections.singletonList(topic));
                         
-                        produceToScheduler(record.value());
-                        Thread.sleep(10);
-                    }
+                        int runningMode = monitorService.getRunningMode();
+                        
+                        /*
+                         * if runningMode is 0, it means stop the app, then sleep 5 minutes, pipeline have enough time to process all of the order.
+                         */
+                        if (runningMode == 0){
+                            Thread.sleep(300);
+                            break;
+                        }
+                        
+                        ConsumerRecords<Integer, OrderEntity> records = consumerFromKafka.poll(1000);
+                        for (ConsumerRecord<Integer, OrderEntity> record : records) {
+                            logger.debug("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
+                            
+                            produceToScheduler(record.value());
+                        }
+                        
+    
+                } 
+                catch (InterruptedException ex) {
                 }
-                    
-
-            } catch (InterruptedException ex) {
             }
         }
     }
@@ -123,13 +122,14 @@ public class SchedulerService {
         }
 
         public void run() {
-            try {
-                while (true) {
-                    OrderContext context = consume();
-                    Pipeline<Processor> pipeline = service.getPipeline();
-                    pipeline.processPipeline(context);
+            while (true) {
+                try {
+                        OrderContext context = consume();
+                        Pipeline<Processor> pipeline = service.getPipeline();
+                        pipeline.processPipeline(context);
+                } 
+                catch (InterruptedException ex) {
                 }
-            } catch (InterruptedException ex) {
             }
         }
     }

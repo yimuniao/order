@@ -51,24 +51,24 @@ public class ProducerService {
 
         public void run() {
 
-            try {
-                int messageNo = 1;
-
-                while (true) {
-                    OrderEntity order = queue.take();
-                    if (isAsync) {
-                        producer.send(new ProducerRecord<Integer, OrderEntity>(topic, order),
-                                new DemoCallBack(System.currentTimeMillis(), messageNo, order));
-                    } else {
-                        ProducerRecord<Integer, OrderEntity> data = new ProducerRecord<Integer, OrderEntity>(topic,
-                                order);
-                        producer.send(data);
+            while (true) {
+                try {
+                    int messageNo = 1;
+    
+                        OrderEntity order = queue.take();
+                        if (isAsync) {
+                            producer.send(new ProducerRecord<Integer, OrderEntity>(topic, order),
+                                    new DemoCallBack(System.currentTimeMillis(), messageNo, order));
+                        } else {
+                            ProducerRecord<Integer, OrderEntity> data = new ProducerRecord<Integer, OrderEntity>(topic, order);
+                            producer.send(data);
+                        }
+                        ++messageNo;
+                    } 
+                catch (Exception e) {
+    
                     }
-                    ++messageNo;
                 }
-            } catch (Exception e) {
-
-            }
         }
     }
 
