@@ -18,5 +18,7 @@ public interface PipelineRunnerService<T> {
     void start();
 
     int getProcessedOrderCount();
+    
+    boolean process(T context);
 
 }

@@ -1,5 +1,6 @@
 package com.yimuniao.pipelinethread.processingservice;
 
+import java.sql.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -109,4 +110,51 @@ public abstract class AbstractRunnerService<T extends OrderContext> implements P
     public int getProcessedOrderCount() {
         return processedOrderCount.get();
     }
+    
+    
+    @Override
+    public void start() {
+        for (int i = 0; i < this.getProcessorThreadNum(); i++) {
+            ProcessorThread processorThread = new ProcessorThread();
+            this.getProcessorService().submit(processorThread);
+        }
+    }
+    
+    class ProcessorThread implements Runnable {
+
+        private ProcessorThread() {
+        }
+
+        public void run() {
+            try {
+                while (true) {
+                    T context = getQueue().take();
+                    /**
+                     * TODO processing the ordercontext here.
+                     */
+                    processedOrderCount.incrementAndGet();
+                    context.setStartTime(new Date(System.currentTimeMillis()));
+                    context.setStep(step);
+                    // context.setFailed(false);
+
+                    /**
+                     * TODO Write a new OrderStepEntity to mysql, it identify
+                     * that which step this order processed, and starttime,
+                     * complete time, and whether failed or not.
+                     */
+                   
+                    process(context);
+                    
+                    /**
+                     * After processed, send the context to next step. if
+                     * context is failed, send to failureservice, then send to
+                     * next normal service.
+                     */
+                    sendToNextStep(context);
+                }
+            } catch (InterruptedException ex) {
+            }
+        }
+    }
+
 }

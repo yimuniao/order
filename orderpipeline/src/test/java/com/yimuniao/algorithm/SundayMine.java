@@ -62,6 +62,12 @@ public class SundayMine {
         begin = System.nanoTime();
         System.out.println("SundayMatch:" + sundySearch.sundayMatch());
         System.out.println("SundayMatch:" + (System.nanoTime() - begin));
+        
+        int a = -11000;
+        String aa = Integer.toString(a);
+        System.out.println("aa: "+aa);
+        String bb="abcdefg";
+        System.out.println("  " + bb.substring(2, 4));
     }
 
 }

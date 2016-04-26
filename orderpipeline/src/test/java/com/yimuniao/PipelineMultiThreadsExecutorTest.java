@@ -73,8 +73,8 @@ public class PipelineMultiThreadsExecutorTest extends TestCase {
     public void testApp() {
 
         SchedulingRunnerService schedulingService = new SchedulingRunnerService(1);
-        PreProcessingRunnerService preProcessingService = new PreProcessingRunnerService(1);
-        ProcessingRunnerService processingService = new ProcessingRunnerService(1);
+        PreProcessingRunnerService preProcessingService = new PreProcessingRunnerService(11);
+        ProcessingRunnerService processingService = new ProcessingRunnerService(12);
         PostProcessingRunnerService postProcessingService = new PostProcessingRunnerService(1);
         CompleteProcessingRunnerService completeProcessingRunnerService = new CompleteProcessingRunnerService(1);
         FailProssingRunnerService failProcessingRunnerService = new FailProssingRunnerService(1);
